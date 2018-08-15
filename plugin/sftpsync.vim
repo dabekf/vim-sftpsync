@@ -20,8 +20,3 @@ call s:InitVar('g:sftpsync_print_time', 0)
 call s:InitVar('g:sftpsync_use_statusline', 0)
 call s:InitVar('g:sftpsync_projects', {})
 
-if exists('s:sftpsync_timer')
-	timer_stop(s:sftpsync_timer)
-endif
-let s:sftpsync_timer = timer_start(g:sftpsync_cache_purge_timeout, 'sftpsync#PurgeConnections', {'repeat': -1})
-

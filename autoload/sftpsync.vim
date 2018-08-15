@@ -66,6 +66,8 @@ function! sftpsync#Upload(...)
 			echo printf('Upload time: %f', reltimefloat(reltime()) - start_time)
 		endif
 	endif
+
+	call sftpsync#TimerStart()
 endfunction
 
 function! sftpsync#Init(target, once)
@@ -95,3 +97,11 @@ function! sftpsync#Cycle(targets)
 		call sftpsync#Init(a:targets[0], 0)
 	endtry
 endfunction
+
+function! sftpsync#TimerStart()
+	if exists('s:sftpsync_timer')
+		return
+	endif
+	let s:sftpsync_timer = timer_start(g:sftpsync_cache_purge_timeout, 'sftpsync#PurgeConnections', {'repeat': -1})
+endfunction
+
