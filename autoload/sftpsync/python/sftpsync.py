@@ -29,7 +29,7 @@ class SftpSync(object):
 		try:
 			self.pkey = paramiko.RSAKey.from_private_key_file(os.path.expandvars(vim.eval('g:sftpsync_private_key_file')))
 		except FileNotFoundError:
-			pass
+			self.pkey = None
 
 		self.socket_timeout = int(vim.eval('g:sftpsync_socket_timeout'))
 		self.debug = False
@@ -85,12 +85,16 @@ class SftpSync(object):
 				if 'paramiko' in sys.modules:
 					# use paramiko
 					for host in config['hosts']:
-						password = None # always use publickey
-						(username, hostname) = host.split('@')
+						(username, hostname) = host.rsplit('@', 1)
 						try:
-							(hostname, port) = hostname.split(':')
+							(hostname, port) = hostname.rsplit(':', 1)
 						except ValueError:
 							port = 22
+
+						try:
+							(username, password) = username.split(':', 1)
+						except ValueError:
+							password = None
 
 						try:
 							# raise Exception('test')
@@ -99,8 +103,8 @@ class SftpSync(object):
 							if cache_key in self.connections and self.connections[cache_key][0].get_transport().is_active():
 								(t, sftp) = self.connections[cache_key]
 							else:
-								if not self.pkey:
-									raise FileNotFoundError('Private key file is missing, please set g:sftpsync_pkey_file')
+								if not self.pkey and not password:
+									raise FileNotFoundError('Neither private key file nor password is set, please adjust configuration')
 
 								t = paramiko.SSHClient()
 

@@ -1,7 +1,7 @@
 # vim-sftpsync
 Upload files to remote server via sftp in Vim.
 
-This plugin allows you to send a file from a local project to a remote server using SFTP protocol. Unlike other plugins I've looked at, this one doesn't start external processes, but uses the Vim's python interface and python SSH library, [Paramiko](http://www.paramiko.org/). That way start times are shorter and you can reuse open connections, so subsequent uploads are even faster (I've measured 0.1s and lower). Makes it great for hooking to an autocommand like *BufWritePost*.
+This plugin allows you to send a file from a local project to a remote server using SFTP protocol. Unlike other plugins I've looked at, this one doesn't start external processes, but uses the Vim's python interface and python SSH library, [Paramiko](http://www.paramiko.org/). That way start times are shorter and you can reuse open connections, so subsequent uploads are even faster (I've measured 0.1s and lower). Makes it great for hooking to an autocommand like `BufWritePost`.
 
 Requirements
 ------------
@@ -26,13 +26,12 @@ Basic configuration
 -------------------
 There are two important variables:
 
-* `g:sftpsync_private_key_file` - point this to your ssh identity (private key)
+* `g:sftpsync_private_key_file` - point this to your ssh identity (private key) if you don't want to keep passwords in configuration
 
     Example:
     ```vim
     let g:sftpsync_private_key_file = 'C:/Cygwin64/home/$USERNAME/.ssh/id_rsa'
     ```
-    For now, there is no password support, it might come later.
 
 
 * `g:sftpsync_projects` - where to send which files
@@ -51,7 +50,7 @@ There are two important variables:
     \            },
     \            'test': {
     \                'directory': '/home/www/myproject',
-    \                'hosts': ['user@hippo.example.com', 'user@lion.example.com'],
+    \                'hosts': ['user@hippo.example.com', 'user:p4ssw0rd@lion.example.com'],
     \            },
     \        }
     \    },
