@@ -72,7 +72,7 @@ There are two important variables:
 Basic usage
 -----------
 ```vim
-sftpsync#Upload(filename, target)
+:call sftpsync#Upload([filename], [target])
 ```
 
 Arguments:
