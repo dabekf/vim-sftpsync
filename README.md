@@ -32,7 +32,7 @@ There are two important variables:
     ```vim
     let g:sftpsync_private_key_file = 'C:/Cygwin64/home/$USERNAME/.ssh/id_rsa'
     ```
-    For now, now password support, it might come later.
+    For now, there is no password support, it might come later.
 
 
 * `g:sftpsync_projects` - where to send which files
