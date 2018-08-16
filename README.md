@@ -10,13 +10,13 @@ Requirements
 
 Installation
 ------------
-you use [vim-plug](https://github.com/junegunn/vim-plug), then add the following line to your vimrc file:
+If you use [vim-plug](https://github.com/junegunn/vim-plug), then add the following line to your vimrc file:
 
 ```vim
 Plug 'filedil/vim-sftpsync'
 ```
 
-and then use `:PlugInstall`.  Or, you can use any other plugin manager such as
+and then use `:PlugInstall`. Or, you can use any other plugin manager such as
 [vundle](https://github.com/gmarik/vundle),
 [dein](https://github.com/Shougo/dein.vim),
 [neobundle](https://github.com/Shougo/neobundle.vim), or
