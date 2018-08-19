@@ -6,6 +6,17 @@
 " License:     MIT License
 " ============================================================================
 
+if exists('g:sftpsync_loaded') || &compatible
+    finish
+elseif v:version < 800
+    echohl Error
+    echo "vim-sftpsync requires Vim 8+."
+    echohl None
+    finish
+else
+    let g:sftpsync_loaded = 1
+endif
+
 function! s:InitVar(var, value)
 	if !exists(a:var)
 		exec 'let '. a:var . '=' . string(a:value)
