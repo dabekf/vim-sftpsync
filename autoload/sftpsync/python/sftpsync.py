@@ -82,73 +82,71 @@ class SftpSync(object):
 				# raise Exception('test')
 				config = project['destination'][target]
 
-				if 'paramiko' in sys.modules:
-					# use paramiko
-					for host in config['hosts']:
-						(username, hostname) = host.rsplit('@', 1)
-						try:
-							(hostname, port) = hostname.rsplit(':', 1)
-						except ValueError:
-							port = 22
+				for host in config['hosts']:
+					(username, hostname) = host.rsplit('@', 1)
+					try:
+						(hostname, port) = hostname.rsplit(':', 1)
+					except ValueError:
+						port = 22
 
-						try:
-							(username, password) = username.split(':', 1)
-						except ValueError:
-							password = None
+					try:
+						(username, password) = username.split(':', 1)
+					except ValueError:
+						password = None
 
-						try:
-							# raise Exception('test')
-							cache_key = '{}_{}'.format(project_name, host)
+					try:
+						# raise Exception('test')
+						cache_key = '{}_{}'.format(project_name, host)
 
-							if cache_key in self.connections and self.connections[cache_key][0].get_transport().is_active():
-								(t, sftp) = self.connections[cache_key]
+						if cache_key in self.connections and self.connections[cache_key][0].get_transport().is_active():
+							(t, sftp) = self.connections[cache_key]
+						else:
+							if not self.pkey and not password:
+								raise FileNotFoundError('Neither private key file nor password is set, please adjust configuration')
+
+							t = paramiko.SSHClient()
+
+							if self.host_keys_file:
+								t.load_host_keys(self.host_keys_file)
 							else:
-								if not self.pkey and not password:
-									raise FileNotFoundError('Neither private key file nor password is set, please adjust configuration')
+								t.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-								t = paramiko.SSHClient()
+							t.connect(
+								hostname,
+								port=port,
+								username=username,
+								password=password,
+								pkey=self.pkey,
+								timeout = self.socket_timeout,
+							)
+							sftp = t.open_sftp()
 
-								if self.host_keys_file:
-									t.load_host_keys(self.host_keys_file)
-								else:
-									t.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+							self.connections[cache_key] = (t, sftp)
 
-								t.connect(
-									hostname,
-									port=port,
-									username=username,
-									password=password,
-									pkey=self.pkey,
-									timeout = self.socket_timeout,
-								)
-								sftp = t.open_sftp()
+						try:
+							sftp.put(filename, destination)
+						except FileNotFoundError:
+							# make all missing directiories
+							path = "/".join(destination_dir.split('/')[0:len(project['destination'][target]['directory'].split('/'))])
+							subdirs = destination_dir.split('/')[len(project['destination'][target]['directory'].split('/')):-1]
 
-								self.connections[cache_key] = (t, sftp)
+							for subdir in subdirs:
+								path = posixpath.join(path, subdir)
 
-							try:
-								sftp.put(filename, destination)
-							except FileNotFoundError:
-								# make all missing directiories
-								path = "/".join(destination_dir.split('/')[0:len(project['destination'][target]['directory'].split('/'))])
-								subdirs = destination_dir.split('/')[len(project['destination'][target]['directory'].split('/')):-1]
+								try:
+									sftp.listdir(path)
+								except FileNotFoundError:
+									sftp.mkdir(path)
 
-								for subdir in subdirs:
-									path = posixpath.join(path, subdir)
+							sftp.put(filename, destination)
 
-									try:
-										sftp.listdir(path)
-									except FileNotFoundError:
-										sftp.mkdir(path)
+					except Exception:
+						self.printError(traceback.format_exc().split('\n'))
+						self.setStatus("error")
+						return False
 
-								sftp.put(filename, destination)
-
-							self.setStatus("done")
-							return True
-						except Exception:
-							self.printError(traceback.format_exc().split('\n'))
-							self.setStatus("error")
-							return False
-
+				self.setStatus("done")
+				return True
 			else:
 				self.printDebug("Filename '%s' doesn't match project '%s'" % (filename, project_name))
 
