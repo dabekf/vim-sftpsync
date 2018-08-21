@@ -18,9 +18,9 @@ else
 endif
 
 function! s:InitVar(var, value)
-	if !exists(a:var)
-		exec 'let '. a:var . '=' . string(a:value)
-	endif
+    if !exists(a:var)
+        exec 'let '. a:var . '=' . string(a:value)
+    endif
 endfunction
 
 call s:InitVar('g:sftpsync_host_keys_file', '')
