@@ -25,8 +25,8 @@ endfunction
 
 call s:InitVar('g:sftpsync_host_keys_file', '')
 call s:InitVar('g:sftpsync_private_key_file', '')
-call s:InitVar('g:sftpsync_socket_timeout', 3)
-call s:InitVar('g:sftpsync_cache_purge_timeout', 900 * 1000) " every 15 minutes
+call s:InitVar('g:sftpsync_socket_timeout', 10)
+call s:InitVar('g:sftpsync_cache_purge_timeout', 1800 * 1000) " every 30 minutes
 call s:InitVar('g:sftpsync_print_time', 0)
 call s:InitVar('g:sftpsync_use_statusline', 0)
 call s:InitVar('g:sftpsync_projects', {})
