@@ -13,7 +13,7 @@ Installation
 If you use [vim-plug](https://github.com/junegunn/vim-plug), then add the following line to your vimrc file:
 
 ```vim
-Plug 'filedil/vim-sftpsync'
+Plug 'SunsetCat/vim-sftpsync'
 ```
 
 and then use `:PlugInstall`. Or, you can use any other plugin manager such as
